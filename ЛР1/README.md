@@ -40,6 +40,9 @@ class Test(unittest.TestCase):
         nums = [3, 3]
         target = 6
         self.assertEqual(TwoSum(nums, target), [0, 1])
+
+    if __name__ == '__main__':
+        unittest.main()
 ```
 * Код проверяет, что функция TwoSum(nums, target) корректно находит индексы двух чисел в списке nums, сумма которых равна заданному значению target.
 

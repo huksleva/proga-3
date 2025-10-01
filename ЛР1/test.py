@@ -19,4 +19,5 @@ class Test(unittest.TestCase):
         target = 6
         self.assertEqual(TwoSum(nums, target), [0, 1])
 
-
+if __name__ == '__main__':
+    unittest.main()

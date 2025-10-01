@@ -7,10 +7,12 @@
 ## code.py
 ```python
 def TwoSum(nums, target):
+    res = []
     for i in range(len(nums)-1):
         for g in range(i+1, len(nums)):
             if nums[i] + nums[g] == target:
-                print(i, g)
+                res.append([i, g])
+    return res
 ```
 
 * Внешний цикл i проходит от 0 до len(nums) - 2 (в данном случае только i = 0).
@@ -29,20 +31,21 @@ class Test(unittest.TestCase):
     def test1(self):
         nums = [2, 7, 11, 15]
         target = 9
-        self.assertEqual(TwoSum(nums, target), [0, 1])
+        self.assertEqual(TwoSum(nums, target), [[0, 1]])
 
     def test2(self):
         nums = [3, 2, 4]
         target = 6
-        self.assertEqual(TwoSum(nums, target), [1, 2])
+        self.assertEqual(TwoSum(nums, target), [[1, 2]])
 
     def test3(self):
         nums = [3, 3]
         target = 6
-        self.assertEqual(TwoSum(nums, target), [0, 1])
+        self.assertEqual(TwoSum(nums, target), [[0, 1]])
 
-    if __name__ == '__main__':
-        unittest.main()
+if __name__ == '__main__':
+    unittest.main()
+
 ```
 * Код проверяет, что функция TwoSum(nums, target) корректно находит индексы двух чисел в списке nums, сумма которых равна заданному значению target.
 

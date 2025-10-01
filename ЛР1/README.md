@@ -3,18 +3,48 @@
 ## Задание
 Дан массив целых чисел nums и целочисленное значение переменной target , верните индексы двух чисел таким образом, чтобы они в сумме давали target. У каждого входного набора может не быть решений и может быть только одно решение, если есть элементы дающие в сумме target. Вы не можете  использовать один и тот же элемент дважды (и соответственно индекс тоже). Вы можете вернуть ответ в любом порядке нахождения индексов.
 
-## Код
+## Листинг кода
+## code.py
 ```python
-nums = [3,3]
-target = 6
-
-for i in range(len(nums)-1):
-    for g in range(i+1, len(nums)):
-        if nums[i] + nums[g] == target:
-            print(i, g)
+def TwoSum(nums, target):
+    for i in range(len(nums)-1):
+        for g in range(i+1, len(nums)):
+            if nums[i] + nums[g] == target:
+                print(i, g)
 ```
 
 * Внешний цикл i проходит от 0 до len(nums) - 2 (в данном случае только i = 0).
 * Внутренний цикл g начинается с i + 1, то есть с 1.
 * Проверяется условие: nums[0] + nums[1] == 3 + 3 == 6, что равно target.
 * Условие выполняется → выводятся индексы 0 и 1.
+
+## test.py
+```python
+import unittest
+from code import TwoSum
+
+
+class Test(unittest.TestCase):
+
+    def test1(self):
+        nums = [2, 7, 11, 15]
+        target = 9
+        self.assertEqual(TwoSum(nums, target), [0, 1])
+
+    def test2(self):
+        nums = [3, 2, 4]
+        target = 6
+        self.assertEqual(TwoSum(nums, target), [1, 2])
+
+    def test3(self):
+        nums = [3, 3]
+        target = 6
+        self.assertEqual(TwoSum(nums, target), [0, 1])
+```
+* Код проверяет, что функция TwoSum(nums, target) корректно находит индексы двух чисел в списке nums, сумма которых равна заданному значению target.
+
+
+- Конкретно тестируются три случая:
+  - [2, 7, 11, 15], target=9 → ожидается [0, 1]
+  - [3, 2, 4], target=6 → ожидается [1, 2]
+  - [3, 3], target=6 → ожидается [0, 1]

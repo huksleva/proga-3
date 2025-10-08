@@ -5,3 +5,4 @@ def TwoSum(nums, target):
             if nums[i] + nums[g] == target:
                 res.append([i, g])
     return res
+

@@ -26,22 +26,52 @@ import unittest
 from code import TwoSum
 
 
+def IsMyType(res):
+    indicator = True
+    indicator *= isinstance(res, list)
+    for i in res:
+        indicator *= isinstance(i, list)
+        for g in i:
+            indicator *= isinstance(g, int)
+    return indicator
+
+
 class Test(unittest.TestCase):
 
     def test1(self):
         nums = [2, 7, 11, 15]
         target = 9
-        self.assertEqual(TwoSum(nums, target), [[0, 1]])
+        result = TwoSum(nums, target)
+        self.assertEqual(IsMyType(result), True)
+        self.assertEqual(result, [[0, 1]])
 
     def test2(self):
         nums = [3, 2, 4]
         target = 6
-        self.assertEqual(TwoSum(nums, target), [[1, 2]])
+        result = TwoSum(nums, target)
+        self.assertEqual(IsMyType(result), True)
+        self.assertEqual(result, [[1, 2]])
 
     def test3(self):
         nums = [3, 3]
         target = 6
-        self.assertEqual(TwoSum(nums, target), [[0, 1]])
+        result = TwoSum(nums, target)
+        self.assertEqual(IsMyType(result), True)
+        self.assertEqual(result, [[0, 1]])
+
+    def test4(self):
+        nums = [1, 2, 3, 4, 5, 4, 3, 2, 1]
+        target = 5
+        result = TwoSum(nums, target)
+        self.assertEqual(IsMyType(result), True)
+        self.assertEqual(result, [[0, 3], [0, 5], [1, 2], [1, 6], [2, 7], [3, 8], [5, 8], [6, 7]])
+
+    def test5(self):
+        nums = [1, 2, 1, 2, 1, 2]
+        target = 3
+        result = TwoSum(nums, target)
+        self.assertEqual(IsMyType(result), True)
+        self.assertEqual(result, [[0, 1], [0, 3], [0, 5], [1, 2], [1, 4], [2, 3], [2, 5], [3, 4], [4, 5]])
 
 if __name__ == '__main__':
     unittest.main()
@@ -50,7 +80,10 @@ if __name__ == '__main__':
 * Код проверяет, что функция TwoSum(nums, target) корректно находит индексы двух чисел в списке nums, сумма которых равна заданному значению target.
 
 
-- Конкретно тестируются три случая:
-  - [2, 7, 11, 15], target=9 → ожидается [0, 1]
-  - [3, 2, 4], target=6 → ожидается [1, 2]
-  - [3, 3], target=6 → ожидается [0, 1]
+- Конкретно тестируются пять случаев:
+  - [2, 7, 11, 15], target=9 → ожидается [[0, 1]]
+  - [3, 2, 4], target=6 → ожидается [[1, 2]]
+  - [3, 3], target=6 → ожидается [[0, 1]]
+  - [1, 2, 3, 4, 5, 4, 3, 2, 1], target=5 → ожидается [[0, 3], [0, 5], [1, 2], [1, 6], [2, 7], [3, 8], [5, 8], [6, 7]]
+  - [1, 2, 1, 2, 1, 2], target=3 → ожидается [[0, 1], [0, 3], [0, 5], [1, 2], [1, 4], [2, 3], [2, 5], [3, 4], [4, 5]]
+

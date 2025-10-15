@@ -2,7 +2,7 @@ def gen_bin_tree(height: int, root: int) -> dict:
     """
     Нерекурсивная функция для построения бинарного дерева заданной высоты.
     Правила генерации потомков:
-        left_child  = parent * 2
+        left_child = parent * 2
         right_child = parent + 3
     Возвращает дерево в виде вложенного словаря.
     """
@@ -110,15 +110,15 @@ def print_tree_graphic(tree: dict, indent="", prefix=""):
 
 
 # Пример использования
-if __name__ == "__main__":
-    root_value = 1
-    tree_height = 5
 
-    tree_dict = gen_bin_tree(height=tree_height, root=root_value)
+root_value = 1
+tree_height = 5
 
-    print("Бинарное дерево (в виде словаря):")
-    print(tree_dict)
-    print("\n--- Визуализация по уровням ---")
-    print_tree_levels(tree_dict)
-    print("\n--- Графическая визуализация (с ветвями) ---")
-    print_tree_graphic(tree_dict)
+tree_dict = gen_bin_tree(height=tree_height, root=root_value)
+
+print("Бинарное дерево (в виде словаря):")
+print(tree_dict)
+print("\n--- Визуализация по уровням ---")
+print_tree_levels(tree_dict)
+print("\n--- Графическая визуализация (с ветвями) ---")
+print_tree_graphic(tree_dict)

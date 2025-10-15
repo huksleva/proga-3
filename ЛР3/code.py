@@ -1,4 +1,4 @@
-def gen_bin_tree(root, height, i=0, dictionary=None):
+def gen_bin_tree(root: int, height: int, i=0, dictionary=None):
     if height == 0:
         return None
 

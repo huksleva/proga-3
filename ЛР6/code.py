@@ -35,7 +35,7 @@ def log_errors(func):
 
 
 @log_errors
-def get_currencies(currencyCodes, url: str):
+def get_currencies(currencyCodes, url: str = "https://www.cbr-xml-daily.ru/daily_json.js"):
     """
     Получает курсы валют с указанного API по списку символьных кодов.
 
@@ -58,7 +58,7 @@ def get_currencies(currencyCodes, url: str):
     valute_data = data['Valute']
     result = {}
 
-    for code in currency_codes:
+    for code in currencyCodes:
         # Если кода нет — возникнет KeyError при обращении
         result[code] = valute_data[code]['Value']
 

@@ -1,4 +1,12 @@
-def gen_bin_tree(height: int, root: int) -> dict:
+from collections import deque
+from typing import Callable, Optional
+
+def gen_bin_tree(
+    height: int,
+    root: int,
+    left_func: Optional[Callable[[int], int]] = lambda x: x*2,
+    right_func: Optional[Callable[[int], int]] = lambda x: x+3
+) -> dict:
     """
     Нерекурсивная функция для построения бинарного дерева заданной высоты.
     Правила генерации потомков:
@@ -6,28 +14,33 @@ def gen_bin_tree(height: int, root: int) -> dict:
         right_child = parent + 3
     Возвращает дерево в виде вложенного словаря.
     """
-    if height <= 0:
+
+    if height < 0:
         return {}
+    elif height == 0:
+        return {'value': root, 'left': None, 'right': None}
+    else:
+        tree = {'value': root, 'left': None, 'right': None}
+        queue = deque()
+        queue.append((tree, 1))  # (узел, глубина)
 
-    tree = {'value': root, 'left': None, 'right': None}
-    queue = [(tree, 1)]  # (узел, глубина)
+        while queue:
+            node, depth = queue.popleft()
 
-    while queue:
-        node, depth = queue.pop(0)
+            if depth >= height:
+                continue
 
-        if depth >= height:
-            continue
+            left_val = left_func(node['value'])
+            right_val = right_func(node['value'])
 
-        left_val = node['value'] * 2
-        right_val = node['value'] + 3
 
-        node['left'] = {'value': left_val, 'left': None, 'right': None}
-        queue.append((node['left'], depth + 1))
+            node['left'] = {'value': left_val, 'left': None, 'right': None}
+            queue.append((node['left'], depth + 1))
 
-        node['right'] = {'value': right_val, 'left': None, 'right': None}
-        queue.append((node['right'], depth + 1))
+            node['right'] = {'value': right_val, 'left': None, 'right': None}
+            queue.append((node['right'], depth + 1))
 
-    return tree
+        return tree
 
 
 def print_tree_levels(tree: dict) -> None:
@@ -114,7 +127,7 @@ def print_tree_graphic(tree: dict, indent="", prefix=""):
 root_value = 1
 tree_height = 5
 
-tree_dict = gen_bin_tree(height=tree_height, root=root_value)
+tree_dict = gen_bin_tree(tree_height, root_value)
 
 print("Бинарное дерево (в виде словаря):")
 print(tree_dict)

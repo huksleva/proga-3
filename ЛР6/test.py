@@ -1,68 +1,145 @@
 import unittest
-from code import gen_bin_tree
+import sys
+from io import StringIO
+from unittest.mock import patch, Mock
+from code import get_currencies
+import requests
 
 
-class Test(unittest.TestCase):
+class TestGetCurrencies(unittest.TestCase):
 
-    def test_return_type(self):
-        """Проверка, что функция возвращает словарь или пустой словарь."""
-        result = gen_bin_tree(height=3, root=1)
-        self.assertIsInstance(result, dict, "Функция должна возвращать объект типа dict")
+    def setUp(self):
+        # Сохраняем оригинальный stdout, чтобы восстановить после каждого теста
+        self.held_stdout = sys.stdout
 
-        # Проверка для height <= 0
-        result_empty = gen_bin_tree(height=0, root=5)
-        self.assertIsInstance(result_empty, dict, "При height <= 0 должна возвращаться пустой dict")
-        self.assertEqual(result_empty, {}, "При height <= 0 должен возвращаться пустой словарь")
+    def tearDown(self):
+        # Восстанавливаем stdout
+        sys.stdout = self.held_stdout
 
-    def test_correct_structure_small_tree(self):
-        """Проверка корректности структуры дерева для небольшого случая (height=2, root=1)."""
-        expected = {
-            'value': 1,
-            'left': {'value': 2, 'left': None, 'right': None},
-            'right': {'value': 4, 'left': None, 'right': None}
-        }
-        result = gen_bin_tree(height=2, root=1)
-        self.assertEqual(result, expected, "Дерево высоты 2 с корнем 1 построено неверно")
-
-    def test_correct_structure_height_1(self):
-        """Проверка дерева высоты 1 — только корень."""
-        expected = {'value': 10, 'left': None, 'right': None}
-        result = gen_bin_tree(height=1, root=10)
-        self.assertEqual(result, expected, "Дерево высоты 1 должно содержать только корень")
-
-    def test_correct_structure_height_3(self):
-        """Проверка дерева высоты 3 с корнем 1."""
-        # Уровень 1: 1
-        # Уровень 2: 2 (1*2), 4 (1+3)
-        # Уровень 3:
-        #   от 2: 4 (2*2), 5 (2+3)
-        #   от 4: 8 (4*2), 7 (4+3)
-        expected = {
-            'value': 1,
-            'left': {
-                'value': 2,
-                'left': {'value': 4, 'left': None, 'right': None},
-                'right': {'value': 5, 'left': None, 'right': None}
-            },
-            'right': {
-                'value': 4,
-                'left': {'value': 8, 'left': None, 'right': None},
-                'right': {'value': 7, 'left': None, 'right': None}
+    @patch('code.requests.get')
+    def test_valid_response_returns_correct_dict(self, mock_get):
+        # Подготовка мок-ответа
+        mock_response = Mock()
+        mock_response.json.return_value = {
+            "Valute": {
+                "USD": {"Value": 90.5},
+                "EUR": {"Value": 98.25},
+                "GBP": {"Value": 115.0}
             }
         }
-        result = gen_bin_tree(height=3, root=1)
-        self.assertEqual(result, expected, "Дерево высоты 3 с корнем 1 построено неверно")
+        mock_response.raise_for_status.return_value = None
+        mock_get.return_value = mock_response
 
-    def test_negative_height(self):
-        """Проверка обработки отрицательной высоты."""
-        result = gen_bin_tree(height=-5, root=1)
-        self.assertEqual(result, {}, "При отрицательной высоте должно возвращаться {}")
+        # Вызов функции
+        result = get_currencies(['USD', 'EUR'])
 
-    def test_zero_height(self):
-        """Проверка высоты 0."""
-        result = gen_bin_tree(height=0, root=100)
-        self.assertEqual(result, {}, "При height=0 должно возвращаться {}")
+        # Проверка: результат — словарь
+        self.assertIsInstance(result, dict)
+        # Проверка ключей
+        self.assertIn('USD', result)
+        self.assertIn('EUR', result)
+        self.assertEqual(len(result), 2)
+        # Проверка значений (типы и значения)
+        self.assertIsInstance(result['USD'], (int, float))
+        self.assertIsInstance(result['EUR'], (int, float))
+        self.assertEqual(result['USD'], 90.5)
+        self.assertEqual(result['EUR'], 98.25)
 
+    @patch('code.requests.get')
+    def test_missing_code_logs_and_returns_none(self, mock_get):
+        mock_response = Mock()
+        mock_response.json.return_value = {
+            "Valute": {
+                "USD": {"Value": 90.5}
+                # EUR отсутствует
+            }
+        }
+        mock_response.raise_for_status.return_value = None
+        mock_get.return_value = mock_response
+
+        # Перехватываем stdout
+        captured_output = StringIO()
+        sys.stdout = captured_output
+
+        result = get_currencies(['USD', 'EUR'])
+
+        # Восстанавливаем stdout
+        sys.stdout = self.held_stdout
+
+        # Функция должна вернуть None из-за KeyError на 'EUR'
+        self.assertIsNone(result)
+
+        # Проверка лога
+        output = captured_output.getvalue()
+        self.assertIn("Валюта 'EUR' отсутствует в данных API.", output)
+
+    @patch('code.requests.get')
+    def test_no_valute_in_response_logs_and_returns_none(self, mock_get):
+        mock_response = Mock()
+        mock_response.json.return_value = {"Date": "2025-04-05"}  # Нет 'Valute'
+        mock_response.raise_for_status.return_value = None
+        mock_get.return_value = mock_response
+
+        captured_output = StringIO()
+        sys.stdout = captured_output
+
+        result = get_currencies(['USD'])
+
+        sys.stdout = self.held_stdout
+
+        self.assertIsNone(result)
+        output = captured_output.getvalue()
+        self.assertIn("В ответе не содержатся курсы валют", output)
+
+    @patch('code.requests.get')
+    def test_request_exception_logs_and_returns_none(self, mock_get):
+        # Имитируем сетевую ошибку
+        mock_get.side_effect = requests.RequestException("Connection failed")
+
+        captured_output = StringIO()
+        sys.stdout = captured_output
+
+        result = get_currencies(['USD'])
+
+        sys.stdout = self.held_stdout
+
+        self.assertIsNone(result)
+        output = captured_output.getvalue()
+        self.assertIn("Ошибка выполнения запроса к API", output)
+        self.assertIn("Connection failed", output)
+
+    @patch('code.requests.get')
+    def test_empty_code_list_returns_empty_dict(self, mock_get):
+        mock_response = Mock()
+        mock_response.json.return_value = {
+            "Valute": {
+                "USD": {"Value": 90.5}
+            }
+        }
+        mock_get.return_value = mock_response
+
+        result = get_currencies([])
+
+        self.assertIsInstance(result, dict)
+        self.assertEqual(result, {})
+
+    @patch('code.requests.get')
+    def test_all_currencies_missing_logs_each_and_returns_none(self, mock_get):
+        mock_response = Mock()
+        mock_response.json.return_value = {"Valute": {}}
+        mock_get.return_value = mock_response
+
+        captured_output = StringIO()
+        sys.stdout = captured_output
+
+        result = get_currencies(['BTC', 'ETH'])
+
+        sys.stdout = self.held_stdout
+
+        self.assertIsNone(result)
+        output = captured_output.getvalue()
+        self.assertIn("Валюта 'BTC' отсутствует", output)
+        self.assertIn("Валюта 'ETH' отсутствует", output)
 
 
 if __name__ == '__main__':

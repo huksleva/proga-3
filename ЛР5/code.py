@@ -1,5 +1,6 @@
 import timeit
 import matplotlib.pyplot as plt
+from functools import lru_cache
 
 
 # 1. Реализация функций
@@ -21,34 +22,26 @@ def fact_iterative(n):
 
 
 # Мемоизация для рекурсивной функции
-_fact_memo = {0: 1, 1: 1}
-
-
+@lru_cache(maxsize=None)
 def fact_recursive_memo(n):
     if n < 0:
         raise ValueError("Факториал не определён для отрицательных чисел")
-    if n in _fact_memo:
-        return _fact_memo[n]
-    _fact_memo[n] = n * fact_recursive_memo(n - 1)
-    return _fact_memo[n]
+    elif n in (0, 1):
+        return 1
+    else:
+        return fact_recursive(n-1)
+
 
 
 # Для итеративной мемоизация не даёт преимущества, но для чистоты эксперимента:
 # можно использовать тот же подход, хотя он избыточен
-_fact_iter_memo = {0: 1, 1: 1}
-
-
+@lru_cache(maxsize=None)
 def fact_iterative_memo(n):
     if n < 0:
         raise ValueError("Факториал не определён для отрицательных чисел")
-    if n in _fact_iter_memo:
-        return _fact_iter_memo[n]
-    # Начинаем с последнего известного значения
-    start = max(_fact_iter_memo.keys())
-    result = _fact_iter_memo[start]
-    for i in range(start + 1, n + 1):
+    result = 1
+    for i in range(2, n + 1):
         result *= i
-        _fact_iter_memo[i] = result
     return result
 
 
@@ -63,12 +56,6 @@ results = {
     'recursive_memo': [],
     'iterative_memo': []
 }
-
-# Сбросим мемо-кэш перед началом тестов для честного сравнения
-_fact_memo.clear()
-_fact_memo.update({0: 1, 1: 1})
-_fact_iter_memo.clear()
-_fact_iter_memo.update({0: 1, 1: 1})
 
 for n in test_numbers:
     print(f"Testing n = {n}...")

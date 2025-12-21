@@ -5,8 +5,8 @@ from typing import Any, Callable, Optional
 def gen_bin_tree(
     height: int,
     root: Any = 1,
-    left_leaf: Optional[Callable[[Any], Any]] = None,
-    right_leaf: Optional[Callable[[Any], Any]] = None
+    left_leaf: Optional[Callable[[Any], Any]] = lambda x: x * 2,
+    right_leaf: Optional[Callable[[Any], Any]] = lambda x: x + 3
 ) -> dict:
     """Рекурсивно генерирует двоичное дерево в виде вложенного словаря.
 
@@ -31,39 +31,34 @@ def gen_bin_tree(
      - Если height == 0, возвращает {'значение': root}.
     """
 
-    # Set default lambda functions if not provided
-    if left_leaf is None:
-        left_leaf = lambda x: x * 2
-    if right_leaf is None:
-        right_leaf = lambda x: x + 3
+
 
     # Handle invalid height
+    # Base case: height == 0 → leaf node (no children)
     if height < 0:
         return {}
-
-    # Base case: height == 0 → leaf node (no children)
-    if height == 0:
+    elif height == 0:
         return {"value": root}
+    else:
+        # Recursive case: build left and right subtrees
+        left_subtree = gen_bin_tree(
+            height - 1,
+            left_leaf(root),
+            left_leaf,
+            right_leaf
+        )
+        right_subtree = gen_bin_tree(
+            height - 1,
+            right_leaf(root),
+            left_leaf,
+            right_leaf
+        )
 
-    # Recursive case: build left and right subtrees
-    left_subtree = gen_bin_tree(
-        height - 1,
-        left_leaf(root),
-        left_leaf,
-        right_leaf
-    )
-    right_subtree = gen_bin_tree(
-        height - 1,
-        right_leaf(root),
-        left_leaf,
-        right_leaf
-    )
-
-    return {
-        "value": root,
-        "left": left_subtree,
-        "right": right_subtree
-    }
+        return {
+            "value": root,
+            "left": left_subtree,
+            "right": right_subtree
+        }
 
 
 # Example usage

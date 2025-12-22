@@ -8,7 +8,7 @@ class App:
     Содержит название, версию и ссылку на автора.
     """
 
-    def __init__(self, name: str = "PROGA3", version: str = "V2.0", author: Author = None):
+    def __init__(self, name: str = "PROGA3", version: str = "2.0", author: Author = None):
         self.name = name
         self.version = version
         self.author = author or Author()  # если не передан — создаём дефолтного

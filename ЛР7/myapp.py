@@ -1,12 +1,12 @@
 # myapp.py
 
-
-
-
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
-from jinja2 import Environment, PackageLoader, select_autoescape
+from jinja2 import Environment, FileSystemLoader, select_autoescape
 import os
+
+# Получаем путь к папке templates (относительно текущего файла)
+templates_dir = os.path.join(os.path.dirname(__file__), "templates")
 
 # Импортируем модели
 from models import App, Author, User, Currency, UserCurrency
@@ -16,18 +16,11 @@ from utils.currencies_api import get_currencies
 
 # --- ГЛОБАЛЬНЫЕ ОБЪЕКТЫ ---
 
-# Инициализация Environment один раз при старте приложения
+# Инициализируем Environment с FileSystemLoader
 env = Environment(
-    loader=PackageLoader("myapp"), # "myapp" — название пакета с шаблонами
+    loader=FileSystemLoader(templates_dir),
     autoescape=select_autoescape()
 )
-
-# Проверка: найдётся ли шаблон?
-try:
-    template = env.get_template("user_detail.html")
-    print("✅ Шаблон user_detail.html найден!")
-except Exception as e:
-    print(f"❌ Ошибка: {e}")
 
 
 # Загружаем шаблоны
@@ -39,7 +32,7 @@ template_author = env.get_template("author.html")
 
 # Создаём экземпляры приложения и автора
 main_author = Author(name="Леонид", group="ИВТ 2", age=20, sex="М")
-main_app = App(name="PROGA3", version="V2.0", author=main_author)
+main_app = App(name="PROGA3", version="2.0", author=main_author)
 
 # --- ВРЕМЕННЫЕ ДАННЫЕ (для примера) ---
 # В реальном приложении данные должны браться из БД или файла

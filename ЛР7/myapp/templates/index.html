@@ -1,0 +1,18 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ app_name }}</title>
+</head>
+<body>
+    <h1>Добро пожаловать в {{ app_name }} v{{ app_version }}</h1>
+    <p>Автор: {{ author_name }}, группа: {{ group }}</p>
+
+    <nav>
+        {% for item in navigation %}
+            <a href="{{ item.href }}">{{ item.caption }}</a> |
+        {% endfor %}
+    </nav>
+</body>
+</html>

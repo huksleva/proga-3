@@ -25,7 +25,7 @@ template_author = env.get_template("author.html")
 
 # === Глобальные объекты ===
 main_author = Author(name="Леонид", group="ИВТ 2", age=20, sex="М")
-main_app = App(name="PROGA3", version="V2.0", author=main_author)
+main_app = App(name="PROGA3", version="2.0", author=main_author)
 
 # === Тестовые данные ===
 users = [
@@ -43,7 +43,7 @@ subscriptions = [
 # === Обработчик запросов ===
 class MyRequestHandler(BaseHTTPRequestHandler):
 
-    def do_get(self):
+    def do_GET(self):
         parsed_path = urlparse(self.path)
         path = parsed_path.path
         query_params = parse_qs(parsed_path.query)

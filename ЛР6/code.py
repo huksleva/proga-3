@@ -3,6 +3,7 @@ import requests
 import sys
 
 
+
 def log_errors(func):
     """
     Декоратор для логирования ошибок в sys.stdout.

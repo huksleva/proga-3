@@ -118,7 +118,10 @@ class MyRequestHandler(BaseHTTPRequestHandler):
         self.send_html_response(html)
 
     def handle_currencies(self):
+
+
         currencies = get_currencies()
+
         html = template_currencies.render(
             currencies=currencies,
             navigation=[

@@ -1,11 +1,13 @@
+<!-- templates/user_detail.html -->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Пользователь</title>
+    <title>Профиль пользователя</title>
 </head>
 <body>
     <h1>Профиль пользователя</h1>
+
     {% if user %}
         <p><strong>Имя:</strong> {{ user.name }}</p>
         <p><strong>ID:</strong> {{ user.i_d }}</p>
@@ -14,13 +16,14 @@
         {% if currencies %}
             <ul>
             {% for cur in currencies %}
-                {% if cur %}
-                    <li>{{ cur.name }} ({{ cur.char_code }}): {{ cur.value }} за {{ cur.nominal }}</li>
-                {% endif %}
+                <li>
+                    {{ cur.name }} ({{ cur.char_code }}) —
+                    <strong>{{ "%.4f"|format(cur.value) }}</strong> за {{ cur.nominal }}
+                </li>
             {% endfor %}
             </ul>
         {% else %}
-            <p>Подписок нет</p>
+            <p>Нет подписок</p>
         {% endif %}
     {% else %}
         <p>Пользователь не найден</p>

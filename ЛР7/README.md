@@ -164,14 +164,13 @@ html = template_users.render(users=users, navigation=...)
 ---
 
 ## **5. Примеры работы приложения**
-
-![[Pasted image 20260101172103.png]]
-![[Pasted image 20260101172113.png]]
-![[Pasted image 20260101172121.png]]
-![[Pasted image 20260101172129.png]]
-![[Pasted image 20260101172141.png]]
-![[Pasted image 20260101172159.png]]
-![[Pasted image 20260101172208.png]]
+![Pasted image 20260101172103.png](images/Pasted%20image%2020260101172103.png)
+![Pasted image 20260101172113.png](images/Pasted%20image%2020260101172113.png)
+![Pasted image 20260101172121.png](images/Pasted%20image%2020260101172121.png)
+![Pasted image 20260101172129.png](images/Pasted%20image%2020260101172129.png)
+![Pasted image 20260101172141.png](images/Pasted%20image%2020260101172141.png)
+![Pasted image 20260101172159.png](images/Pasted%20image%2020260101172159.png)
+![Pasted image 20260101172208.png](images/Pasted%20image%2020260101172208.png)
 
 
 1. **Главная страница (`/`)** — отображает название приложения, версию, имя автора и группу.

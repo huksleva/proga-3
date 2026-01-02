@@ -1,0 +1,32 @@
+<!-- templates/currencies.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Курсы валют</title>
+</head>
+<body>
+    <h1>Актуальные курсы валют (ЦБ РФ)</h1>
+    {% if currencies %}
+        <table border="1">
+            <tr>
+                <th>Код</th>
+                <th>Название</th>
+                <th>Курс</th>
+                <th>За единиц</th>
+            </tr>
+            {% for cur in currencies %}
+                <tr>
+                    <td>{{ cur.char_code }}</td>
+                    <td>{{ cur.name }}</td>
+                    <td>{{ "%.4f"|format(cur.value) }}</td>
+                    <td>{{ cur.nominal }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>Не удалось загрузить курсы валют</p>
+    {% endif %}
+    <a href="/">← Назад</a>
+</body>
+</html>
